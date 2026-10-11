@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+
+<style id="webmakerstyle">
+
+</style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HCJ Scriptsheet Memorizer</title>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; margin: 0; padding: 0; }
+    body { background: linear-gradient(145deg, #f8faff 0%, #e9eef5 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+    .container { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 42px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.7); width: 100%; max-width: 1200px; padding: 30px 35px; border: 1px solid rgba(255, 255, 255, 0.5); }
+    h1 { font-size: 2.2rem; font-weight: 600; color: #1a2b4c; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; letter-spacing: -0.02em; }
+    h1 span { color: white; font-size: 1rem; font-weight: 500; padding: 4px 12px; border-radius: 40px; letter-spacing: 0.3px; background: linear-gradient(135deg, #2d4b7a, #1a2b4c); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+    .subhead { color: #4a5c7c; margin-bottom: 28px; font-weight: 400; font-size: 1rem; border-left: 4px solid #7d9fd0; padding-left: 16px; background: rgba(125, 159, 208, 0.08); border-radius: 0 8px 8px 0; line-height: 1.5; }
+    .workspace { display: flex; flex-direction: column; gap: 25px; }
+    .input-panel { display: flex; flex-direction: column; gap: 12px; }
+    .label-row { display: flex; justify-content: space-between; align-items: center; padding: 0 6px; }
+    .label-row label { font-weight: 600; color: #1e2f4a; font-size: 1rem; letter-spacing: -0.2px; display: flex; align-items: center; gap: 6px; }
+    .label-row label i { font-style: normal; font-size: 1.2rem; }
+    .char-counter { background: #dfe6f0; color: #1f3a5f; padding: 3px 10px; border-radius: 30px; font-size: 0.8rem; font-weight: 500; }
+    textarea { width: 100%; padding: 18px 22px; font-size: 1rem; line-height: 1.6; border: 2px solid #cbd6e6; border-radius: 24px; background: white; resize: vertical; min-height: 160px; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; transition: border 0.2s, box-shadow 0.2s; box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02); color: #0a1a2f; }
+    textarea:focus { outline: none; border-color: #6e8fc9; box-shadow: 0 0 0 4px rgba(110, 143, 201, 0.25), inset 0 2px 6px rgba(0, 0, 0, 0.02); }
+    .action-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 6px; }
+    .button-group { display: flex; flex-wrap: wrap; gap: 10px; }
+    button { background: white; border: 1.5px solid #b8c8e0; color: #1f3a5f; font-weight: 600; padding: 12px 22px; border-radius: 60px; font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.15s ease; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02); letter-spacing: -0.2px; flex: 0 0 auto; }
+    button.primary { background: #1f3a5f; border: 1.5px solid #1f3a5f; color: white; box-shadow: 0 8px 16px -6px rgba(31, 58, 95, 0.3); }
+    button.primary:hover { background: #132b47; border-color: #132b47; transform: translateY(-1px); box-shadow: 0 12px 20px -8px rgba(31, 58, 95, 0.4); }
+    button.secondary { background: #f0f5ff; border-color: #b0c6e0; }
+    button.secondary:hover { background: #e2ecfe; border-color: #8aa9d0; transform: translateY(-1px); }
+    button.ghost { background: transparent; border-color: #cbd6e6; color: #3e5670; }
+    button.ghost:hover { background: #eef3fc; border-color: #9bb1d0; }
+    button:active { transform: translateY(1px); box-shadow: none; }
+    button:disabled { opacity: 0.4; pointer-events: none; filter: grayscale(0.5); }
+    .memorizer-panel { background: #ffffffd9; border-radius: 32px; padding: 28px 28px 32px; border: 1px solid #ffffff; box-shadow: inset 0 1px 4px #ffffff, 0 12px 24px -16px rgba(0, 0, 0, 0.2); backdrop-filter: blur(4px); transition: all 0.2s; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+    .panel-header h2 { font-size: 1.5rem; font-weight: 600; color: #1e2f4a; letter-spacing: -0.3px; }
+    .progress-indicator { background: #e4ebf5; border-radius: 40px; padding: 4px 16px; font-weight: 500; color: #1d314b; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+    .progress-indicator .level-badge { background: #1f3a5f; color: white; border-radius: 30px; padding: 3px 12px; font-weight: 600; font-size: 0.8rem; }
+    .script-display { background: #f9fcff; border-radius: 24px; padding: 28px 25px; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 1.1rem; line-height: 1.8; white-space: pre-wrap; word-break: break-word; min-height: 180px; max-height: 360px; overflow-y: auto; border: 1px solid #d9e2f0; box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02); color: #0a1a2f; transition: background 0.2s; letter-spacing: 0.3px; }
+    .script-display .hidden-char { background: #1f3a5f; color: transparent; border-radius: 4px; padding: 0 2px; margin: 0 1px; transition: background 0.15s, color 0.15s; user-select: none; display: inline-block; min-width: 0.6em; text-shadow: none; }
+    .script-display .hidden-char.revealed { background: #d9e6ff; color: #0a1a2f; }
+    .script-display .hidden-char.space-char { background: #cbd6e6; min-width: 0.8em; }
+    .script-display .hidden-char.space-char.revealed { background: #d9e6ff; }
+    .empty-message { color: #7f8fa0; font-style: italic; text-align: center; padding: 40px 20px; font-family: system-ui, sans-serif; font-size: 1.1rem; background: #f5f9ff; border-radius: 18px; border: 1px dashed #b8c8e0; }
+    .controls-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; align-items: center; justify-content: space-between; }
+    .nav-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+    .info-tip { font-size: 0.85rem; color: #5c6f8a; background: #eef4fd; padding: 8px 18px; border-radius: 40px; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+    .footer-note { margin-top: 18px; text-align: right; font-size: 0.75rem; color: #9aaec9; letter-spacing: 0.3px; }
+    .voice-panel { margin-top: 28px; padding: 24px 28px 28px; background: #ffffffd9; border-radius: 32px; border: 1px solid #ffffff; box-shadow: inset 0 1px 4px #ffffff, 0 12px 24px -16px rgba(0, 0, 0, 0.2); }
+    .voice-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
+    .voice-header h3 { font-size: 1.3rem; font-weight: 600; color: #1e2f4a; }
+    .voice-status { background: #e4ebf5; border-radius: 40px; padding: 4px 16px; font-weight: 500; color: #1d314b; font-size: 0.9rem; }
+    .voice-status.recording { background: #ffd6d6; color: #a11b1b; }
+    .voice-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    .voice-result { font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 1rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; min-height: 40px; padding: 14px 18px; background: #f9fcff; border-radius: 18px; border: 1px solid #d9e2f0; color: #0a1a2f; }
+    .voice-result .match { background: #d4f5d4; border-radius: 4px; padding: 0 2px; }
+    .voice-result .miss { background: #ffd6d6; border-radius: 4px; padding: 0 2px; text-decoration: line-through; }
+    .voice-result .extra { background: #ffeaa7; border-radius: 4px; padding: 0 2px; }
+    .lang-wrap { position: relative; display: inline-block; }
+    .lang-menu { display: none; position: absolute; bottom: 110%; left: 0; background: white; border: 1.5px solid #b8c8e0; border-radius: 18px; box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.25); padding: 8px; min-width: 190px; max-height: 280px; overflow-y: auto; z-index: 50; }
+    .lang-menu.open { display: block; }
+    .lang-item { padding: 10px 14px; border-radius: 12px; cursor: pointer; font-size: 0.95rem; font-weight: 500; color: #1f3a5f; display: flex; align-items: center; gap: 8px; transition: background 0.15s; }
+    .lang-item:hover { background: #eef3fc; }
+    .lang-item.active { background: #1f3a5f; color: white; }
+    #typeInput { width: 100%; padding: 18px 22px; font-size: 1rem; line-height: 1.6; border: 2px solid #cbd6e6; border-radius: 24px; background: white; resize: vertical; min-height: 140px; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; transition: border 0.2s, box-shadow 0.2s; box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02); color: #0a1a2f; }
+    #typeInput:focus { outline: none; border-color: #6e8fc9; box-shadow: 0 0 0 4px rgba(110, 143, 201, 0.25), inset 0 2px 6px rgba(0, 0, 0, 0.02); }
+    .ai-panel { background: linear-gradient(145deg, #ffffff 0%, #f4f8ff 100%); border: 1.5px solid #d9e2f0; }
+    .ai-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    .ai-chat { background: #f9fcff; border-radius: 20px; border: 1px solid #d9e2f0; padding: 18px; min-height: 140px; max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+    .ai-msg { padding: 12px 16px; border-radius: 18px; font-size: 0.95rem; line-height: 1.55; max-width: 85%; word-wrap: break-word; }
+    .ai-bot { background: #e8efff; color: #1a2b4c; align-self: flex-start; border-bottom-left-radius: 6px; }
+    .ai-user { background: #1f3a5f; color: white; align-self: flex-end; border-bottom-right-radius: 6px; }
+    .ai-msg b { color: #1f3a5f; }
+    .ai-user b { color: #ffeaa7; }
+    .ai-input-row { display: flex; gap: 10px; }
+    .ai-input-row input { flex: 1; padding: 12px 18px; border: 2px solid #cbd6e6; border-radius: 60px; font-size: 0.95rem; font-family: inherit; color: #0a1a2f; transition: border 0.2s, box-shadow 0.2s; }
+    .ai-input-row input:focus { outline: none; border-color: #6e8fc9; box-shadow: 0 0 0 4px rgba(110, 143, 201, 0.25); }
+    .ai-typing { display: inline-block; animation: blink 1s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>📜 Scriptsheet Memorizer <span>HCJ</span></h1>
+  <div class="subhead">Paste any script — we'll gradually hide characters to help you memorize it.</div>
+
+  <div class="workspace">
+    <div class="input-panel">
+      <div class="label-row">
+        <label><i>📋</i> Your script</label>
+        <div class="char-counter" id="charCounter">0 characters</div>
+      </div>
+      <textarea id="scriptInput" placeholder="Paste your script here...">To be, or not to be, that is the question:
+Whether 'tis nobler in the mind to suffer
+The slings and arrows of outrageous fortune,
+Or to take arms against a sea of troubles
+And by opposing end them.</textarea>
+      <div class="action-bar">
+        <div class="button-group">
+          <button class="primary" id="loadBtn">📥 Load script</button>
+          <button class="secondary" id="resetBtn">⟲ Reset hides</button>
+        </div>
+        <button class="ghost" id="clearBtn">🗑️ Clear all</button>
+      </div>
+    </div>
+
+    <div class="memorizer-panel">
+      <div class="panel-header">
+        <h2>🧠 Memorization mode</h2>
+        <div class="progress-indicator">
+          <span>Hide level</span>
+          <span class="level-badge" id="levelDisplay">0%</span>
+        </div>
+      </div>
+      <div id="scriptDisplay" class="script-display">
+        <div class="empty-message">Your script will appear here after loading.</div>
+      </div>
+      <div class="controls-row">
+        <div class="nav-buttons">
+          <button class="secondary" id="revealOneBtn">🔍 Reveal one</button>
+          <button class="secondary" id="hideOneBtn">🙈 Hide one</button>
+          <button class="primary" id="hideMoreBtn">➕ Hide 5 more</button>
+        </div>
+        <div class="info-tip">💡 Click any hidden block to reveal it</div>
+      </div>
+    </div>
+
+    <div class="voice-panel">
+      <div class="voice-header">
+        <h3>🎤 Speak the script</h3>
+        <div class="voice-status" id="voiceStatus">Not recording</div>
+      </div>
+      <div class="voice-controls">
+        <button class="primary" id="startRecBtn">🎙️ Start recording</button>
+        <button class="secondary" id="stopRecBtn" disabled>⏹️ Stop</button>
+        <button class="ghost" id="compareBtn" disabled>🔎 Compare my words</button>
+        <div class="lang-wrap">
+          <button class="ghost" id="langBtn">🌐 Languages</button>
+          <div class="lang-menu" id="langMenu">
+            <div class="lang-item active" data-lang="en-US">🇺🇸 English</div>
+            <div class="lang-item" data-lang="es-ES">🇪🇸 Spanish</div>
+            <div class="lang-item" data-lang="fr-FR">🇫🇷 French</div>
+            <div class="lang-item" data-lang="de-DE">🇩🇪 German</div>
+            <div class="lang-item" data-lang="it-IT">🇮🇹 Italian</div>
+            <div class="lang-item" data-lang="pt-BR">🇧🇷 Portuguese</div>
+            <div class="lang-item" data-lang="ja-JP">🇯🇵 Japanese</div>
+            <div class="lang-item" data-lang="ko-KR">🇰🇷 Korean</div>
+            <div class="lang-item" data-lang="zh-CN">🇨🇳 Chinese</div>
+            <div class="lang-item" data-lang="hi-IN">🇮🇳 Hindi</div>
+            <div class="lang-item" data-lang="tl-PH">🇵🇭 Filipino</div>
+            <div class="lang-item" data-lang="ar-SA">🇸🇦 Arabic</div>
+          </div>
+        </div>
+      </div>
+      <div id="voiceResult" class="voice-result"></div>
+    </div>
+
+    <div class="voice-panel">
+      <div class="voice-header">
+        <h3>⌨️ Type it from memory</h3>
+        <div class="voice-status" id="typeStatus">Type below, then check</div>
+      </div>
+      <textarea id="typeInput" placeholder="Type the script here from memory..."></textarea>
+      <div class="voice-controls" style="margin-top:14px;">
+        <button class="primary" id="checkTypeBtn">✅ Check my typing</button>
+        <button class="secondary" id="showScriptBtn">👁️ Peek at script</button>
+        <button class="ghost" id="clearTypeBtn">🗑️ Clear</button>
+      </div>
+      <div id="typeResult" class="voice-result"></div>
+    </div>
+
+    <div class="voice-panel ai-panel">
+      <div class="voice-header">
+        <h3>🤖 AI Study Buddy</h3>
+        <div class="voice-status" id="aiStatus">Ready to help</div>
+      </div>
+      <div class="ai-buttons">
+        <button class="secondary" id="aiHintBtn">💡 Give me a hint</button>
+        <button class="secondary" id="aiNextBtn">📖 What's the next line?</button>
+        <button class="secondary" id="aiTrickBtn">🧠 Memory trick</button>
+        <button class="primary" id="aiQuizBtn">❓ Quiz me</button>
+        <button class="ghost" id="aiClearBtn">🗑️ Clear</button>
+      </div>
+      <div class="ai-chat" id="aiChat">
+        <div class="ai-msg ai-bot">👋 Hi! I'm your study buddy. Load a script above, then click a button to get help memorizing it!</div>
+      </div>
+      <div class="ai-input-row">
+        <input type="text" id="aiUserInput" placeholder="Type a question... e.g. 'What does nobler mean?'" />
+        <button class="primary" id="aiSendBtn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">HCJ Scriptsheet Memorizer — hide, reveal, memorize.</div>
+</div>
+
+<script>
+  (function(){
+    // ===== Main DOM =====
+    const scriptInput = document.getElementById('scriptInput');
+    const charCounter = document.getElementById('charCounter');
+    const loadBtn = document.getElementById('loadBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const scriptDisplay = document.getElementById('scriptDisplay');
+    const levelDisplay = document.getElementById('levelDisplay');
+    const revealOneBtn = document.getElementById('revealOneBtn');
+    const hideOneBtn = document.getElementById('hideOneBtn');
+    const hideMoreBtn = document.getElementById('hideMoreBtn');
+
+    // ===== State =====
+    let originalText = '';
+    let charArray = [];
+    let hiddenIndices = new Set();
+    let totalNonSpaceChars = 0;
+    let hiddenCount = 0;
+
+    // ===== Helpers =====
+    function countNonSpace(str) {
+      let c = 0;
+      for (let ch of str) if (ch !== ' ' && ch !== '\n' && ch !== '\t' && ch !== '\r') c++;
+      return c;
+    }
+
+    function escapeHtml(text) {
+      if (text === ' ') return ' ';
+      if (text === '\n') return '\n';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function cleanWords(text) {
+      return text.toLowerCase().replace(/[^a-z0-9\s']/g, ' ').split(/\s+/).filter(w => w.length > 0);
+    }
+
+    // Smarter word comparison - allows 1 letter difference for longer words
+    function similar(a, b) {
+      if (a === b) return true;
+      if (a.length > 4 && b.length > 4) {
+        let diffs = 0;
+        const len = Math.min(a.length, b.length);
+        for (let i = 0; i < len; i++) if (a[i] !== b[i]) diffs++;
+        diffs += Math.abs(a.length - b.length);
+        if (diffs <= 1) return true;
+      }
+      return false;
+    }
+
+    function updateInputCounter() {
+      const len = scriptInput.value.length;
+      charCounter.textContent = `${len} character${len !== 1 ? 's' : ''}`;
+    }
+
+    function updateLevel() {
+      if (totalNonSpaceChars === 0) { levelDisplay.textContent = '0%'; return; }
+      levelDisplay.textContent = Math.round((hiddenCount / totalNonSpaceChars) * 100) + '%';
+    }
+
+    function recalcHiddenCount() {
+      let c = 0;
+      for (let idx of hiddenIndices) {
+        const ch = charArray[idx];
+        if (ch && ch !== ' ' && ch !== '\n' && ch !== '\t' && ch !== '\r') c++;
+      }
+      hiddenCount = c;
+    }
+
+    function renderScript() {
+      if (!charArray.length) {
+        scriptDisplay.innerHTML = '<div class="empty-message">Your script will appear here after loading.</div>';
+        updateLevel();
+        return;
+      }
+      let html = '';
+      for (let i = 0; i < charArray.length; i++) {
+        const ch = charArray[i];
+        const isHidden = hiddenIndices.has(i);
+        const isSpace = (ch === ' ' || ch === '\n' || ch === '\t' || ch === '\r');
+        if (isHidden) {
+          html += `<span class="hidden-char${isSpace ? ' space-char' : ''}" data-index="${i}">${escapeHtml(ch)}</span>`;
+        } else {
+          html += escapeHtml(ch);
+        }
+      }
+      scriptDisplay.innerHTML = html;
+      updateLevel();
+    }
+
+    function loadScript() {
+      originalText = scriptInput.value;
+      charArray = Array.from(originalText);
+      hiddenIndices.clear();
+      totalNonSpaceChars = countNonSpace(originalText);
+      hiddenCount = 0;
+      renderScript();
+    }
+
+    function resetHides() {
+      hiddenIndices.clear();
+      hiddenCount = 0;
+      renderScript();
+    }
+
+    function clearAll() {
+      scriptInput.value = '';
+      originalText = '';
+      charArray = [];
+      hiddenIndices.clear();
+      totalNonSpaceChars = 0;
+      hiddenCount = 0;
+      updateInputCounter();
+      renderScript();
+    }
+
+    function hideRandomNonSpace(count = 1) {
+      if (!charArray.length) return;
+      const candidates = [];
+      for (let i = 0; i < charArray.length; i++) {
+        const ch = charArray[i];
+        if (ch !== ' ' && ch !== '\n' && ch !== '\t' && ch !== '\r' && !hiddenIndices.has(i)) candidates.push(i);
+      }
+      if (!candidates.length) return;
+      for (let i = candidates.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+      }
+      const toHide = Math.min(count, candidates.length);
+      for (let k = 0; k < toHide; k++) hiddenIndices.add(candidates[k]);
+      recalcHiddenCount();
+      renderScript();
+    }
+
+    function revealIndex(index) {
+      if (hiddenIndices.has(index)) {
+        hiddenIndices.delete(index);
+        recalcHiddenCount();
+        renderScript();
+      }
+    }
+
+    function revealRandomOne() {
+      const arr = [];
+      for (let idx of hiddenIndices) {
+        const ch = charArray[idx];
+        if (ch && ch !== ' ' && ch !== '\n' && ch !== '\t' && ch !== '\r') arr.push(idx);
+      }
+      if (!arr.length) return;
+      revealIndex(arr[Math.floor(Math.random() * arr.length)]);
+    }
+
+    // ===== Main listeners =====
+    scriptInput.addEventListener('input', updateInputCounter);
+    loadBtn.addEventListener('click', loadScript);
+    resetBtn.addEventListener('click', resetHides);
+    clearBtn.addEventListener('click', clearAll);
+    hideOneBtn.addEventListener('click', () => hideRandomNonSpace(1));
+    hideMoreBtn.addEventListener('click', () => hideRandomNonSpace(5));
+    revealOneBtn.addEventListener('click', revealRandomOne);
+
+    scriptDisplay.addEventListener('click', (e) => {
+      const target = e.target.closest('.hidden-char');
+      if (!target) return;
+      const idx = parseInt(target.getAttribute('data-index'), 10);
+      if (!isNaN(idx)) revealIndex(idx);
+    });
+
+    scriptInput.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        loadScript();
+      }
+    });
+
+    updateInputCounter();
+    loadScript();
+
+    // ===== Voice recording =====
+    const startRecBtn = document.getElementById('startRecBtn');
+    const stopRecBtn = document.getElementById('stopRecBtn');
+    const compareBtn = document.getElementById('compareBtn');
+    const voiceStatus = document.getElementById('voiceStatus');
+    const voiceResult = document.getElementById('voiceResult');
+
+    let recognition = null;
+    let isRecording = false;
+    let spokenText = '';
+    let currentLang = 'en-US';
+    let userStopped = false;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      startRecBtn.disabled = true;
+      voiceStatus.textContent = 'Not supported in this browser';
+      voiceResult.textContent = '😕 Try Google Chrome or Microsoft Edge.';
+    }
+
+    startRecBtn.addEventListener('click', () => {
+      if (!SpeechRecognition) return;
+      recognition = new SpeechRecognition();
+      recognition.lang = currentLang;
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 3;
+
+      spokenText = '';
+      voiceResult.innerHTML = '';
+      compareBtn.disabled = true;
+      userStopped = false;
+
+      recognition.onstart = () => {
+        isRecording = true;
+        voiceStatus.textContent = '🔴 Recording...';
+        voiceStatus.classList.add('recording');
+        startRecBtn.disabled = true;
+        stopRecBtn.disabled = false;
+      };
+
+      recognition.onresult = (event) => {
+        let finalText = '';
+        let interimText = '';
+        for (let i = 0; i < event.results.length; i++) {
+          const result = event.results[i];
+          const transcript = result[0].transcript;
+          const confidence = result[0].confidence;
+
+          if (result.isFinal) {
+            if (confidence > 0.4 || confidence === 0) {
+              finalText += transcript + ' ';
+            }
+          } else {
+            interimText += transcript + ' ';
+          }
+        }
+        spokenText = finalText.trim();
+        voiceResult.innerHTML =
+          '👂 <b>I heard:</b> ' + escapeHtml(spokenText) +
+          (interimText ? '<br><span style="color:#7f8fa0;">… ' + escapeHtml(interimText.trim()) + '</span>' : '');
+      };
+
+      recognition.onerror = (event) => {
+        voiceStatus.textContent = '⚠️ Error: ' + event.error;
+        voiceStatus.classList.remove('recording');
+        isRecording = false;
+        startRecBtn.disabled = false;
+        stopRecBtn.disabled = true;
+      };
+
+      recognition.onend = () => {
+        if (!userStopped && isRecording) {
+          try { recognition.start(); } catch(e) {}
+          return;
+        }
+        isRecording = false;
+        voiceStatus.textContent = 'Stopped — ready to compare';
+        voiceStatus.classList.remove('recording');
+        startRecBtn.disabled = false;
+        stopRecBtn.disabled = true;
+        if (spokenText) compareBtn.disabled = false;
+      };
+
+      recognition.start();
+    });
+
+    stopRecBtn.addEventListener('click', () => {
+      userStopped = true;
+      if (recognition && isRecording) recognition.stop();
+    });
+
+    compareBtn.addEventListener('click', () => {
+      if (!originalText || !spokenText) return;
+
+      const scriptWords = cleanWords(originalText);
+      const saidWords = cleanWords(spokenText);
+
+      let html = '';
+      let correct = 0;
+      let sayIndex = 0;
+
+      for (let i = 0; i < scriptWords.length; i++) {
+        const targetWord = scriptWords[i];
+        let matched = false;
+
+        for (let j = sayIndex; j < Math.min(sayIndex + 4, saidWords.length); j++) {
+          if (similar(saidWords[j], targetWord)) {
+            for (let k = sayIndex; k < j; k++) {
+              html += `<span class="extra">${escapeHtml(saidWords[k])}</span> `;
+            }
+            html += `<span class="match">${escapeHtml(targetWord)}</span> `;
+            correct++;
+            sayIndex = j + 1;
+            matched = true;
+            break;
+          }
+        }
+
+        if (!matched) {
+          html += `<span class="miss">${escapeHtml(targetWord)}</span> `;
+        }
+      }
+
+      for (let k = sayIndex; k < saidWords.length; k++) {
+        html += `<span class="extra">${escapeHtml(saidWords[k])}</span> `;
+      }
+
+      const total = scriptWords.length;
+      const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+      let emoji = '😀';
+      if (percent < 50) emoji = '😅';
+      else if (percent < 80) emoji = '🙂';
+
+      voiceResult.innerHTML =
+        `<div style="margin-bottom:10px;font-family:system-ui;font-size:1.1rem;font-weight:600;color:#1e2f4a;">
+          ${emoji} Score: ${correct} / ${total} words correct (${percent}%)
+        </div>
+        <div style="font-size:0.85rem;color:#5c6f8a;margin-bottom:12px;font-family:system-ui;">
+          ✅ correct &nbsp; ❌ missed &nbsp; 🟡 extra word you said
+        </div>` + html;
+    });
+
+    // ===== Language menu =====
+    const langBtn = document.getElementById('langBtn');
+    const langMenu = document.getElementById('langMenu');
+    langBtn.addEventListener('click', (e) => { e.stopPropagation(); langMenu.classList.toggle('open'); });
+    document.addEventListener('click', () => langMenu.classList.remove('open'));
+    langMenu.querySelectorAll('.lang-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        currentLang = item.getAttribute('data-lang');
+        langMenu.querySelectorAll('.lang-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        langBtn.textContent = '🌐 ' + item.textContent.trim();
+        langMenu.classList.remove('open');
+        userStopped = true;
+        if (isRecording && recognition) recognition.stop();
+      });
+    });
+
+    // ===== Type it =====
+    const typeInput = document.getElementById('typeInput');
+    const checkTypeBtn = document.getElementById('checkTypeBtn');
+    const showScriptBtn = document.getElementById('showScriptBtn');
+    const clearTypeBtn = document.getElementById('clearTypeBtn');
+    const typeStatus = document.getElementById('typeStatus');
+    const typeResult = document.getElementById('typeResult');
+
+    function compareTyped() {
+      if (!originalText) { typeResult.innerHTML = '⚠️ Load a script first.'; return; }
+      const typed = typeInput.value;
+      if (!typed.trim()) { typeResult.innerHTML = '⚠️ Type something first!'; return; }
+      const scriptWords = cleanWords(originalText);
+      const typedWords = cleanWords(typed);
+      let html = '';
+      let correct = 0;
+      let typeIndex = 0;
+      for (let i = 0; i < scriptWords.length; i++) {
+        const targetWord = scriptWords[i];
+        let matched = false;
+        for (let j = typeIndex; j < Math.min(typeIndex + 3, typedWords.length); j++) {
+          if (typedWords[j] === targetWord) {
+            for (let k = typeIndex; k < j; k++) html += `<span class="extra">${escapeHtml(typedWords[k])}</span> `;
+            html += `<span class="match">${escapeHtml(targetWord)}</span> `;
+            correct++;
+            typeIndex = j + 1;
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) html += `<span class="miss">${escapeHtml(targetWord)}</span> `;
+      }
+      for (let k = typeIndex; k < typedWords.length; k++) html += `<span class="extra">${escapeHtml(typedWords[k])}</span> `;
+      const total = scriptWords.length;
+      const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+      let emoji = '😀';
+      if (percent < 50) emoji = '😅';
+      else if (percent < 80) emoji = '🙂';
+      typeResult.innerHTML =
+        `<div style="margin-bottom:10px;font-family:system-ui;font-size:1.1rem;font-weight:600;color:#1e2f4a;">
+          ${emoji} Score: ${correct} / ${total} words correct (${percent}%)
+        </div>
+        <div style="font-size:0.85rem;color:#5c6f8a;margin-bottom:12px;font-family:system-ui;">
+          ✅ correct &nbsp; ❌ missed &nbsp; 🟡 extra word you typed
+        </div>` + html;
+      if (percent === 100) typeStatus.textContent = '🏆 Perfect! You memorized it!';
+      else if (percent >= 80) typeStatus.textContent = '👍 Almost there!';
+      else typeStatus.textContent = '💪 Keep practicing!';
+    }
+
+    checkTypeBtn.addEventListener('click', compareTyped);
+    showScriptBtn.addEventListener('click', () => {
+      if (!originalText) { typeResult.innerHTML = '⚠️ No script loaded yet.'; return; }
+      typeResult.innerHTML = `<div style="font-size:0.85rem;color:#5c6f8a;margin-bottom:8px;font-family:system-ui;">👁️ Here's the script — try again from memory next time!</div><div style="white-space:pre-wrap;">${escapeHtml(originalText)}</div>`;
+    });
+    clearTypeBtn.addEventListener('click', () => {
+      typeInput.value = '';
+      typeResult.innerHTML = '';
+      typeStatus.textContent = 'Type below, then check';
+    });
+
+    // ===== AI Study Buddy =====
+    const aiStatus = document.getElementById('aiStatus');
+    const aiChat = document.getElementById('aiChat');
+    const aiUserInput = document.getElementById('aiUserInput');
+    const aiSendBtn = document.getElementById('aiSendBtn');
+    const aiHintBtn = document.getElementById('aiHintBtn');
+    const aiNextBtn = document.getElementById('aiNextBtn');
+    const aiTrickBtn = document.getElementById('aiTrickBtn');
+    const aiQuizBtn = document.getElementById('aiQuizBtn');
+    const aiClearBtn = document.getElementById('aiClearBtn');
+
+    function addMsg(text, who) {
+      const div = document.createElement('div');
+      div.className = 'ai-msg ' + (who === 'user' ? 'ai-user' : 'ai-bot');
+      div.innerHTML = text;
+      aiChat.appendChild(div);
+      aiChat.scrollTop = aiChat.scrollHeight;
+    }
+
+    function botReply(text) {
+      aiStatus.textContent = '🤔 Thinking...';
+      const typing = document.createElement('div');
+      typing.className = 'ai-msg ai-bot';
+      typing.innerHTML = '<span class="ai-typing">●●●</span>';
+      aiChat.appendChild(typing);
+      aiChat.scrollTop = aiChat.scrollHeight;
+      setTimeout(() => {
+        typing.remove();
+        addMsg(text, 'bot');
+        aiStatus.textContent = 'Ready to help';
+      }, 500);
+    }
+
+    function getScriptLines() {
+      return originalText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    }
+
+    function giveHint() {
+      if (!charArray.length) { botReply('📋 Please load a script first.'); return; }
+      let firstHiddenIdx = -1;
+      for (let i = 0; i < charArray.length; i++) {
+        if (hiddenIndices.has(i) && charArray[i] !== ' ' && charArray[i] !== '\n') { firstHiddenIdx = i; break; }
+      }
+      if (firstHiddenIdx === -1) { botReply('🎉 Nothing is hidden yet! Click <b>➕ Hide 5 more</b>.'); return; }
+      let start = firstHiddenIdx;
+      while (start > 0 && charArray[start - 1] !== ' ' && charArray[start - 1] !== '\n') start--;
+      let end = firstHiddenIdx;
+      while (end < charArray.length - 1 && charArray[end + 1] !== ' ' && charArray[end + 1] !== '\n') end++;
+      const word = charArray.slice(start, end + 1).join('');
+      botReply(`💡 <b>Hint:</b> The first hidden word starts with <b>${word[0].toUpperCase()}</b> and has <b>${word.length}</b> letters.`);
+    }
+
+    function giveNextLine() {
+      if (!charArray.length) { botReply('📋 Please load a script first.'); return; }
+      const lines = getScriptLines();
+      const fullText = charArray.join('');
+      let runningIdx = 0;
+      let targetLine = null;
+      for (const line of lines) {
+        const lineStart = fullText.indexOf(line, runningIdx);
+        if (lineStart === -1) continue;
+        const lineEnd = lineStart + line.length;
+        runningIdx = lineEnd;
+        let hiddenInLine = 0;
+        for (let i = lineStart; i < lineEnd; i++) if (hiddenIndices.has(i)) hiddenInLine++;
+        if (hiddenInLine > 0) { targetLine = line; break; }
+      }
+      if (!targetLine) { botReply('🎉 No hidden characters! Try hiding some first.'); return; }
+      const words = targetLine.split(' ');
+      const preview = words.map((w, i) => (i < 3 ? w : '▢'.repeat(Math.min(w.length, 8)))).join(' ');
+      botReply(`📖 <b>Try this line:</b><br><code style="font-family:monospace;color:#1f3a5f;">${escapeHtml(preview)}</code>`);
+    }
+
+    function giveTrick() {
+      if (!originalText) { botReply('📋 Load a script first!'); return; }
+      const tricks = [
+        '🧠 <b>Chunk it!</b> Break the script into 2-3 word chunks.',
+        '🎵 <b>Make a rhythm.</b> Say the words in a beat or sing them.',
+        '✍️ <b>Write it 3 times</b> from memory before checking.',
+        '🗣️ <b>Say it out loud</b> with the 🎤 Speak tool.',
+        '🎨 <b>Picture it!</b> Turn each word into a silly picture.',
+        '🔁 <b>Spaced practice:</b> Review after 5 min, 1 hour, tomorrow.',
+        '🧩 <b>First letters only:</b> "To be or not to be" → "T b o n t b".',
+        '😴 <b>Sleep on it.</b> Review right before bed!'
+      ];
+      botReply('🧠 <b>Memory trick:</b><br>' + tricks[Math.floor(Math.random() * tricks.length)]);
+    }
+
+    function startQuiz() {
+      if (!charArray.length) { botReply('📋 Load a script first.'); return; }
+      const hiddenWords = [];
+      let i = 0;
+      while (i < charArray.length) {
+        if (charArray[i] === ' ' || charArray[i] === '\n') { i++; continue; }
+        let start = i, end = i;
+        while (end < charArray.length && charArray[end] !== ' ' && charArray[end] !== '\n') end++;
+        let hasHidden = false;
+        for (let k = start; k < end; k++) if (hiddenIndices.has(k)) { hasHidden = true; break; }
+        if (hasHidden) hiddenWords.push({ word: charArray.slice(start, end).join('') });
+        i = end;
+      }
+      if (!hiddenWords.length) { botReply('🎉 No hidden words! Hide some first.'); return; }
+      const picked = hiddenWords[Math.floor(Math.random() * hiddenWords.length)];
+      const firstLetter = picked.word[0];
+      const blanks = '▢'.repeat(picked.word.length - 1);
+      botReply(`❓ <b>Quiz time!</b><br>Which word starts with <b>${firstLetter.toUpperCase()}</b>?<br><code style="font-family:monospace;font-size:1.2rem;color:#1f3a5f;">${firstLetter.toUpperCase()}${blanks}</code>`);
+    }
+
+    function answerQuestion(q) {
+      const lower = q.toLowerCase();
+      const meanings = {
+        'nobler': 'braver, more honorable', 'suffer': 'to feel pain or endure',
+        'slings': 'ropes used to throw stones', 'arrows': 'thin pointed weapons',
+        'outrageous': 'shocking, extreme, unfair', 'fortune': 'luck, fate, destiny',
+        'arms': 'weapons', 'troubles': 'problems, worries', 'opposing': 'fighting against',
+        'question': 'something you ask; a doubt', 'mind': 'your thoughts',
+        'sea': 'big body of water (here "a lot of")', 'end': 'to finish or stop'
+      };
+      for (const word in meanings) if (lower.includes(word)) return `📚 <b>${word}</b> means: <i>${meanings[word]}</i>`;
+      if (lower.includes('next') || lower.includes('forgot')) { giveNextLine(); return null; }
+      if (lower.includes('hint')) { giveHint(); return null; }
+      if (lower.includes('quiz') || lower.includes('test')) { startQuiz(); return null; }
+      if (lower.includes('trick')) { giveTrick(); return null; }
+      return '🤖 I can help with: <b>hint</b>, <b>next line</b>, <b>quiz</b>, <b>trick</b>, or ask the meaning of a word like <b>"nobler"</b>.';
+    }
+
+    aiHintBtn.addEventListener('click', () => { addMsg('💡 Give me a hint!', 'user'); giveHint(); });
+    aiNextBtn.addEventListener('click', () => { addMsg('📖 What\'s the next line?', 'user'); giveNextLine(); });
+    aiTrickBtn.addEventListener('click', () => { addMsg('🧠 Memory trick', 'user'); giveTrick(); });
+    aiQuizBtn.addEventListener('click', () => { addMsg('❓ Quiz me!', 'user'); startQuiz(); });
+    aiClearBtn.addEventListener('click', () => { aiChat.innerHTML = ''; addMsg('🧹 Chat cleared!', 'bot'); });
+
+    function sendQuestion() {
+      const q = aiUserInput.value.trim();
+      if (!q) return;
+      addMsg(escapeHtml(q), 'user');
+      aiUserInput.value = '';
+      const reply = answerQuestion(q);
+      if (reply) botReply(reply);
+    }
+    aiSendBtn.addEventListener('click', sendQuestion);
+    aiUserInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); sendQuestion(); }
+    });
+  })();
+</script>
+</body>
+</html>
+
+
+</body>
+</html>
